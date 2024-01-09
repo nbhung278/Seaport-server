@@ -24,19 +24,66 @@ model Avatars {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
   firstName   String
   lastName    String
-  email       String    @unique
+  email       String     @unique
   password    String
   Avatars     Avatars[]
-  phoneNumber String    @unique
+  Posts       Posts[]
+  phoneNumber String     @unique
   address     String?
   gender      Int? // 0 is male , 1 is female , 2 is other 
   birthDate   DateTime?
   bio         String?
-  role        Role      @default(User)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  role        Role       @default(User)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Comments    Comments[]
+}
+
+model Category {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  Posts Posts[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Posts {
+  id          Int        @id @default(autoincrement())
+  title       String
+  content     String
+  status      Int        @default(0)
+  viewCount   Int        @default(0)
+  ratingCount Int        @default(0)
+  Comments    Comments[]
+
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comments {
+  id            Int    @id @default(autoincrement())
+  content       String
+  likeCount     Int    @default(0)
+  status        Int    @default(0)
+  CommentParent Int?
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  Posts   Posts? @relation(fields: [postsId], references: [id])
+  postsId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
